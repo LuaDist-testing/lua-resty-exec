@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "lua-resty-exec"
-version = "1.1.0-0"
+version = "1.1.1-0"
 -- LuaDist source
 source = {
-  tag = "1.1.0-0",
+  tag = "1.1.1-0",
   url = "git://github.com/LuaDist-testing/lua-resty-exec.git"
 }
 -- Original source
 -- source = {
 --     url = "git://github.com/jprjr/lua-resty-exec.git",
---     tag = "1.1.0"
+--     tag = "1.1.1"
 -- }
 description = {
     summary = "Run external programs in OpenResty without spawning a shell",
