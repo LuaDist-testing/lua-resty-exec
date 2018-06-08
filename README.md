@@ -188,7 +188,7 @@ requiring a billion flags.
 local exec_socket = require'resty.exec.socket'
 
 -- you can specify timeout in milliseconds, optional
-local client = resty_socket:new({ timeout = 60000 })
+local client = exec_socket:new({ timeout = 60000 })
 
 -- every new program instance requires a new
 -- call to connect
@@ -227,6 +227,7 @@ print(string.format('Received %s data: %s',typ,data)
 
 data, typ, err = client:receive()
 print(err) -- will print 'closed'
+```
 
 ### `client` object methods:
 
