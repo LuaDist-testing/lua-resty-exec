@@ -1,10 +1,10 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "lua-resty-exec"
-version = "2.0.0-0"
+version = "2.0.0-1"
 -- LuaDist source
 source = {
-  tag = "2.0.0-0",
+  tag = "2.0.0-1",
   url = "git://github.com/LuaDist-testing/lua-resty-exec.git"
 }
 -- Original source
