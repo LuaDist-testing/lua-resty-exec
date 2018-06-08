@@ -14,6 +14,18 @@ to worry about shell escaping/quoting/parsing rules.
 This requires your web server to have an active instance of
 [sockexec](https://github.com/jprjr/sockexec) running.
 
+## Installation
+
+`lua-resty-exec` is available on [luarocks](https://luarocks.org/modules/jprjr/lua-resty-exec)
+as well as [opm](https://opm.openresty.org/), you can install it with `luarocks install
+lua-resty-exec` or `opm get jprjr/lua-resty-exec`.
+
+If you're using this outside of OpenResty, you'll also need the LuaSocket
+module installed, ie `luarocks install luasocket`.
+
+Additionally, you'll need `sockexec` running, see [its repo](https://github.com/jprjr/sockexec)
+for instructions.
+
 ## Usage
 
 ```lua
@@ -66,19 +78,22 @@ local res, err = prog('cat')
 ngx.print(res.stdout)
 ```
 
-### Call with explicit argv and stdin
+### Call with explicit argv, stdin data, stdout/stderr callbacks
 
 ```lua
-local res, err = prog( { argv = 'cat', stdin = 'fun!' } )
+local res, err = prog( {
+    argv = 'cat',
+    stdin = 'fun!',
+    stdout = function(data) print(data) end,
+    stderr = function(data) print("error:", data) end
+} )
 
--- res = { stdout = "fun!", stderr = nil, exitcode = 0, termsig = nil }
+-- res = { stdout = nil, stderr = nil, exitcode = 0, termsig = nil }
 -- err = nil
-
-ngx.print(res.stdout)
+-- 'fun!' is printed
 ```
 
 Note: here `argv` is a string, which is fine if your program doesn't need any
-arguments.
 
 ### Setup stdout/stderr callbacks
 
@@ -129,6 +144,31 @@ Or if you want to run an entire script:
 prog.stdin = script_data
 local res, err = prog('bash')
 ```
+
+### Daemonizing processes
+
+I generally recommend against daemonizing processes - I think it's far
+better to use some kind of message queue and/or supervision system, so
+you can monitor processes, take actions on failure, and so on.
+
+That said, if you want to spin off some process, you could use
+`start-stop-daemon`, ie:
+
+```lua
+local res, err = prog('start-stop-daemon','--pidfile','/dev/null','--background','--exec','/usr/bin/sleep', '--start','--','10')
+```
+
+will spawn `sleep 10` as a detached background process.
+
+If you don't want to deal with `start-stop-daemon`, I have a small utility
+for spawning a background program called [idgaf](https://github.com/jprjr/idgaf), ie:
+
+```lua
+local res, err = prog('idgaf','sleep','10')
+```
+
+This will basically accomplish the same thing `start-stop-daemon` does without
+requiring a billion flags.
 
 
 ## Some example nginx configs
